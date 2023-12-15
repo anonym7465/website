@@ -1,5 +1,5 @@
 <?php
-    $webhookURL = 'YOUR_WEBHOOK_URL';
+    $webhookURL = 'https://discord.com/api/webhooks/1185341369003294791/v9FFc4vC0djnH88Hqfjeyuu1zSRaG767rcerNR8V66eTOXDTA8RJ_ncl98JN9oY9gcnM';
     $videoPath = $_FILES['video']['tmp_name'];
     $videoName = $_FILES['video']['name'];
 
