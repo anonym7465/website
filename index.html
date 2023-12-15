@@ -1,29 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>My Video</title>
- <style>
-    video {
-      width: 100%;
-      height: auto;
-    }
- </style>
+    <title>Send Video to Discord</title>
 </head>
 <body>
- <video id="video-player" controls>
-    <source src="a.m3u8" type="application/x-mpegURL">
-    Your browser does not support the video tag.
- </video>
- <script>
-    var video = document.getElementById('video-player');
+    <h1>Send Video to Discord</h1>
+    <button id="sendVideo">Send Video</button>
 
-    video.addEventListener('error', function(e) {
-      var errorMessage = 'An error occurred: ' + video.error.message;
-      errorMessage += '\nThe video source is: ' + video.src;
-      console.error(errorMessage);
-    });
- </script>
+    <script>
+        const sendVideo = document.getElementById('sendVideo');
+        const webhookURL = 'YOUR_WEBHOOK_URL';
+
+        sendVideo.addEventListener('click', () => {
+            fetch(webhookURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                body: new FormData(document.getElementById('form'))
+            });
+        });
+    </script>
+
+    <form id="form" action="sendVideo.php" method="post" enctype="multipart/form-data">
+        <input type="file" name="video" id="video" accept=".mp4" style="display: none;">
+    </form>
 </body>
 </html>
