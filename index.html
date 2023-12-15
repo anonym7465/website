@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple HLS Video Player</title>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>My Video</title>
+ <style>
+    video {
+      width: 100%;
+      height: auto;
+    }
+ </style>
 </head>
 <body>
-    <video
-        controls
-        width="100%"
-        height="auto"
-    >
-        <source
-            src="a.mp4"
-            type="application/x-mpegURL"
-        >
-        Your browser does not support the video tag.
-    </video>
+ <video id="video-player" controls>
+    <source src="a.m3u8" type="application/x-mpegURL">
+    Your browser does not support the video tag.
+ </video>
+ <script>
+    var video = document.getElementById('video-player');
+
+    video.addEventListener('error', function(e) {
+      var errorMessage = 'An error occurred: ' + video.error.message;
+      errorMessage += '\nThe video source is: ' + video.src;
+      console.error(errorMessage);
+    });
+ </script>
 </body>
 </html>
