@@ -9,8 +9,24 @@
 
     - name: Install necessary software
       apt:
-        name: build-essential cmake git libboost-all-dev libssl-dev libdb++-dev libminiupnpc-dev libevent-dev autogen automake 1.14.2 libtool make g++ unzip pkg-config autoconf
-
+        - build-essential
+        - cmake
+        - git
+        - libboost-all-dev
+        - libssl-dev
+        - libdb++-dev
+        - libminiupnpc-dev
+        - libevent-dev
+        - autogen
+        - automake
+        - 1.14.2
+        - libtool
+        - make
+        - g++
+        - unzip
+        - pkg-config
+        - autoconf
+        
 - name: Clone Mining Software Repository
  hosts: all
  tasks:
