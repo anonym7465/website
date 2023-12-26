@@ -1,14 +1,22 @@
-pre-install: # pre-installation commands
- - sudo apt-get update
- - sudo apt-get install cgminer libcurl4-openssl-dev libjansson-dev libssl-dev
+- hosts: all
+ become: yes
+ tasks:
+    - name: Update package lists
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
 
-globalminer: # global settings for the miner
- algo: sha-256d # algorithm to use for mining (sha-256d for Bitcoin)
- pools: # list of pool servers to mine on
-    - StratumAddress: stratum+tcp://public-pool.io:21496
-      Username: <bc1qs62yqlaqj40gd4u5yelyguag4ct74a0asne3xm>.<foxxz>
-      Password: x
-      Wallet: <bc1qs62yqlaqj40gd4u5yelyguag4ct74a0asne3xm> #
+    - name: Install required packages
+      apt:
+        name: cgminer libcurl4-openssl-dev libjansson-dev libssl-dev
+        state: present
 
-post-install: # post-installation commands
- - cgminer --config your_config_file.yml
+    - name: Create globalminer.conf file
+      copy:
+        content: |
+          globalminer: # global settings for the miner
+           algo: sha-256d # algorithm to use for mining (sha-256d for Bitcoin)
+           pools: # list of pool servers to mine on
+              - StratumAddress: stratum+tcp://public-pool.io:21496
+                Username: <bc1qs62yqlaqj40gd4u5yelyguag4ct74a0asne3xm>.<workername245345>
+                Password: x
