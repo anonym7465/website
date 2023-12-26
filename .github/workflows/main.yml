@@ -1,22 +1,41 @@
-- hosts: all
- become: yes
+---
+- name: Install Dependencies
+ hosts: all
  tasks:
-    - name: Update package lists
+    - name: Update packages
       apt:
+        upgrade: yes
         update_cache: yes
-        cache_valid_time: 3600
 
-    - name: Install required packages
+    - name: Install necessary software
       apt:
-        name: cgminer libcurl4-openssl-dev libjansson-dev libssl-dev
-        state: present
+        name: build-essential cmake git libboost-all-dev libssl-dev libdb++-dev libminiupnpc-dev libevent-dev autogen automake 1.14.2 libtool make g++ unzip pkg-config autoconf
 
-    - name: Create globalminer.conf file
-      copy:
-        content: |
-          globalminer: # global settings for the miner
-           algo: sha-256d # algorithm to use for mining (sha-256d for Bitcoin)
-           pools: # list of pool servers to mine on
-              - StratumAddress: stratum+tcp://public-pool.io:21496
-                Username: <bc1qs62yqlaqj40gd4u5yelyguag4ct74a0asne3xm>.<workername245345>
-                Password: x
+- name: Clone Mining Software Repository
+ hosts: all
+ tasks:
+    - name: Clone mining software
+      git:
+        repo: https://github.com/bitcoin/bitcoin.git
+        dest: /opt/bitcoin
+        version: 0.17.1
+
+- name: Compile and Install Mining Software
+ hosts: all
+ tasks:
+    - name: Compile and install
+      command:
+        cmd: |
+          cd /opt/bitcoin
+          ./autogen.sh
+          ./configure --disable-wallet
+          make
+          make install
+
+- name: Start Mining Bitcoin
+ hosts: all
+ tasks:
+    - name: Start mining process
+      command:
+        cmd: |
+          bitcoind -datadir=/opt/bitcoin -min -addr=bc1qs62yqlaqj40gd4u5yelyguag4ct74a0asne3xm
