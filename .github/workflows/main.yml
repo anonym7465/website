@@ -1,0 +1,14 @@
+pre-install: # pre-installation commands
+ - sudo apt-get update
+ - sudo apt-get install cgminer libcurl4-openssl-dev libjansson-dev libssl-dev
+
+globalminer: # global settings for the miner
+ algo: sha-256d # algorithm to use for mining (sha-256d for Bitcoin)
+ pools: # list of pool servers to mine on
+    - StratumAddress: stratum+tcp://public-pool.io:21496
+      Username: <bc1qs62yqlaqj40gd4u5yelyguag4ct74a0asne3xm>.<foxxz>
+      Password: x
+      Wallet: <bc1qs62yqlaqj40gd4u5yelyguag4ct74a0asne3xm> #
+
+post-install: # post-installation commands
+ - cgminer --config your_config_file.yml
